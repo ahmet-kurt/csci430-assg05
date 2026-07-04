@@ -1,0 +1,53 @@
+name: CI Tests
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.repository.is_template }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: test successfully builds (23 pts)
+        if: ${{ !cancelled() }}
+        run: |
+          make clean
+          make
+      - name: Setup 1 Initial tests of loading and constructing process table (10 pts)
+        if: ${{ !cancelled() }}
+        run: |
+          make
+          ./test --list-test-names-only [setup1] | grep . && ./test [setup1]
+      - name: Task 1 SchedulingSystem accessor methods (17 pts)
+        if: ${{ !cancelled() }}
+        run: |
+          make
+          ./test --list-test-names-only [task1] | grep . && ./test [task1]
+      - name: Task 2 allProcessesDone() member method (5 pts)
+        if: ${{ !cancelled() }}
+        run: |
+          make
+          ./test --list-test-names-only [task2] | grep . && ./test [task2]
+      - name: Task 3 dispatchCpuIfIdle() member method (10 pts)
+        if: ${{ !cancelled() }}
+        run: |
+          make
+          ./test --list-test-names-only [task3] | grep . && ./test [task3]
+      - name: Task 4 checkProcessFinished() member function (10 pts)
+        if: ${{ !cancelled() }}
+        run: |
+          make
+          ./test --list-test-names-only [task4] | grep . && ./test [task4]
+      - name: Task 5 enable FCFS SchedulingSystem simulations (5 pts)
+        if: ${{ !cancelled() }}
+        run: |
+          make
+          ./test --list-test-names-only [task5] | grep . && ./test [task5]
+      - name: system tests (20 pts)
+        if: ${{ !cancelled() }}
+        run: |
+          make
+          ./scripts/run-system-tests
